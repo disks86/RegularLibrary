@@ -31,7 +31,10 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         System/Allocator.h
         RegularLibrary.h
         RegularLibrary.cpp
-        Core/Expected.h)
+        Core/Expected.h
+        System/Console.h
+        Core/List.cpp
+        Core/List.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_REGULARLIBRARY)
 
