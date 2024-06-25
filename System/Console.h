@@ -7,6 +7,7 @@
 
 #include "Export.h"
 #include "Core/Expected.h"
+#include "Core/AsciiString.h"
 
 namespace System {
 
@@ -16,11 +17,16 @@ namespace System {
         Error
     };
 
+    enum class REGULAR_API ConsoleError{
+        GenericError
+    };
+
 class REGULAR_API Console
 {
     void* NativeHandle;
 public:
     Console(ConsoleType consoleType) noexcept;
+    Core::Expected<unsigned long , System::ConsoleError> Write(const Core::AsciiString& message) noexcept;
 };
 
 } // System

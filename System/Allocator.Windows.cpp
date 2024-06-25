@@ -6,7 +6,7 @@ System::Allocator::Allocator() {
     NativeHandle = GetProcessHeap();
 }
 
-Core::Expected<void *, System::AllocationError> System::Allocator::Allocate(size_t size, bool initialize) noexcept {
+Core::Expected<void *, System::AllocationError> System::Allocator::Allocate(unsigned long size, bool initialize) noexcept {
     if (NativeHandle == NULL) {
         return AllocationError::GenericFailure;
     }
@@ -31,7 +31,7 @@ Core::Expected<Core::Empty, System::AllocationError> System::Allocator::Dealloca
     }
 }
 
-Core::Expected<void *, System::AllocationError> System::Allocator::Resize(void *ptr, size_t size, bool initialize) noexcept {
+Core::Expected<void *, System::AllocationError> System::Allocator::Resize(void *ptr, unsigned long size, bool initialize) noexcept {
     if (NativeHandle == NULL) {
         return AllocationError::GenericFailure;
     }
@@ -45,18 +45,18 @@ Core::Expected<void *, System::AllocationError> System::Allocator::Resize(void *
 }
 
 Core::Expected<Core::Empty, System::AllocationError>
-System::Allocator::Copy(void *sourcePointer, void *targetPointer, size_t size) noexcept {
+System::Allocator::Copy(void *sourcePointer, void *targetPointer, unsigned long size) noexcept {
     CopyMemory(targetPointer, sourcePointer, size);
     return Core::Empty();
 }
 
 Core::Expected<Core::Empty, System::AllocationError>
-System::Allocator::Move(void *sourcePointer, void *targetPointer, size_t size) noexcept {
+System::Allocator::Move(void *sourcePointer, void *targetPointer, unsigned long size) noexcept {
     MoveMemory(targetPointer, sourcePointer, size);
     return Core::Empty();
 }
 
-Core::Expected<Core::Empty, System::AllocationError> System::Allocator::Zero(void *ptr, size_t size) noexcept {
+Core::Expected<Core::Empty, System::AllocationError> System::Allocator::Zero(void *ptr, unsigned long size) noexcept {
     SecureZeroMemory(ptr, size);
     return Core::Empty();
 }

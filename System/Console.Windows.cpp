@@ -15,3 +15,18 @@ System::Console::Console(ConsoleType consoleType) noexcept {
             break;
     }
 }
+
+Core::Expected<unsigned long , System::ConsoleError> System::Console::Write(const Core::AsciiString& message) noexcept {
+    if (NativeHandle == INVALID_HANDLE_VALUE) {
+        return ConsoleError::GenericError;
+    }
+
+    const char* text = message.Get();
+    DWORD textLength = message.GetLength();
+    DWORD written;
+    if (!WriteConsoleA(NativeHandle, text, textLength, &written, NULL)) {
+        return ConsoleError::GenericError;
+    } else {
+        return written;
+    }
+}

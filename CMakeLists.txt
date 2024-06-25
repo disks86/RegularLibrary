@@ -34,7 +34,9 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Core/Expected.h
         System/Console.h
         Core/List.cpp
-        Core/List.h)
+        Core/List.h
+        Core/AsciiString.cpp
+        Core/AsciiString.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_REGULARLIBRARY)
 
