@@ -6,6 +6,7 @@
 #define REGULARLIBRARY_LIST_H
 
 #include "System/Allocator.h"
+#include "Core/Math.h"
 
 namespace Core {
 
@@ -26,9 +27,10 @@ namespace Core {
             auto allocationResult = mAllocator->Resize(mArray, mCapacity* sizeof(ValueType), false);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
+                return Core::Empty();
+            } else {
+                return System::AllocationError::OutOfMemory;
             }
-
-            return allocationResult;
         }
 
     public:
@@ -118,7 +120,31 @@ namespace Core {
             return !mSize;
         }
 
-        Core::Expected<ValueType &, Core::ListError> Add(ValueType value) noexcept {
+        template <typename T, size_t N>
+        Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N]) noexcept {
+            for (size_t i = 0; i < N; ++i) {
+                auto result = Add(array[i]);
+                if (!result.HasValue()){
+                    return result.GetError();
+                }
+            }
+
+            return Core::Empty();
+        }
+
+        template <typename T, size_t N>
+        Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N], size_t count) noexcept {
+            for (size_t i = 0; i < Core::Math::Min(N,count); ++i) {
+                auto result = Add(array[i]);
+                if (!result.HasValue()){
+                    return result.GetError();
+                }
+            }
+
+            return Core::Empty();
+        }
+
+        Core::Expected<ValueType*, Core::ListError> Add(ValueType value) noexcept {
             if (mSize == mCapacity) {
                 auto allocationResult = Grow();
                 if (!allocationResult.HasValue()) {
@@ -129,7 +155,7 @@ namespace Core {
             auto index = mSize++;
             mArray[index] = value;
 
-            return mArray[index];
+            return &mArray[index];
         }
 
         Core::Expected<Core::Empty, Core::ListError> Remove(unsigned long index) noexcept {
@@ -144,14 +170,14 @@ namespace Core {
             return Empty();
         }
 
-        Core::Expected<ValueType *, Core::ListError> Get() const noexcept {
+        Core::Expected<ValueType*, Core::ListError> Get() const noexcept {
             if (!mSize) {
                 return ListError::IndexOutOfRange;
             }
             return mArray;
         }
 
-        Core::Expected<ValueType &, Core::ListError> Get(int index) const noexcept {
+        Core::Expected<ValueType*, Core::ListError> Get(int index) const noexcept {
             if (index < 0 || index >= mSize) {
                 return ListError::IndexOutOfRange;
             }
