@@ -42,9 +42,8 @@ namespace Core {
         }
 
         ~List() noexcept {
-            for (unsigned long i = 0; i < mSize; ++i) {
-                mArray[i].~ValueType();
-            }
+            Clear();
+
             auto allocationResult = mAllocator->Deallocate(mArray);
             if (!allocationResult.HasValue()) {
 
@@ -168,6 +167,15 @@ namespace Core {
             --mSize;
 
             return Empty();
+        }
+
+        Core::Expected<Core::Empty, Core::ListError> Clear() noexcept {
+            for (unsigned long i = 0; i < mSize; ++i) {
+                mArray[i].~ValueType();
+            }
+            mSize = 0;
+
+            return Core::Empty();
         }
 
         Core::Expected<ValueType*, Core::ListError> Get() const noexcept {

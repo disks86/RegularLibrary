@@ -42,8 +42,11 @@ Core::Expected<unsigned long , System::ConsoleError> System::Console::Read(Core:
         return ConsoleError::GenericError;
     }
 
-    //TODO: clear out message object.
-    auto result = message.Add(mBuffer, numberOfCharsRead);
+    auto result = message.Clear();
+    if (!result.HasValue()) {
+        return ConsoleError::GenericError;
+    }
+    result = message.Add(mBuffer, numberOfCharsRead);
     if (!result.HasValue()) {
         return ConsoleError::GenericError;
     }
