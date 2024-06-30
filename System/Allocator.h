@@ -44,6 +44,8 @@ namespace System {
         Core::Expected<Core::Empty, System::AllocationError> Move(void *sourcePointer, void *targetPointer, unsigned long size) noexcept;
 
         Core::Expected<Core::Empty, System::AllocationError> Zero(void *ptr, unsigned long size) noexcept;
+
+        static Allocator Default;
     };
 
 } // System

@@ -2,6 +2,8 @@
 
 #include <windows.h>
 
+ System::Allocator System::Allocator::Default;
+
 System::Allocator::Allocator() {
     mNativeHandle = GetProcessHeap();
 }

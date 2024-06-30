@@ -51,7 +51,7 @@ Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::
         return ConsoleError::InvalidConsoleType;
     }
 
-    if (!ReadConsoleA(hConsole, mBuffer, 255, &numberOfCharsRead, NULL)) {
+    if (!ReadFile(hConsole, mBuffer, 255, &numberOfCharsRead, NULL)) {
         DWORD errorCode = GetLastError();
         switch (errorCode) {
             case ERROR_INVALID_FUNCTION:

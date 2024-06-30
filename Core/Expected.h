@@ -1,10 +1,19 @@
 #ifndef REGULARLIBRARY_EXPECTED_H
 #define REGULARLIBRARY_EXPECTED_H
 
+#include "Export.h"
+
 namespace Core {
 
     class REGULAR_API Empty {
 
+    };
+
+    class REGULAR_API ExpectedBase {
+    protected:
+        bool mHasValue = false;
+    public:
+        bool HasValue() const noexcept;
     };
 
     template<class ValueType, class ErrorType>
@@ -14,7 +23,7 @@ namespace Core {
     };
 
     template<class ValueType, class ErrorType>
-    class REGULAR_API Expected {
+    class REGULAR_API Expected : public ExpectedBase {
         bool mHasValue = false;
         ExpectedValue<ValueType, ErrorType> mExpectedValue;
     public:
@@ -43,10 +52,6 @@ namespace Core {
             } else {
                 return valueType;
             }
-        }
-
-        inline bool HasValue() const noexcept {
-            return mHasValue;
         }
 
         inline ValueType GetValue() const noexcept {

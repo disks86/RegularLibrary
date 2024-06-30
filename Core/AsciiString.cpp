@@ -1,8 +1,14 @@
-//
-// Created by disks on 6/24/2024.
-//
 
 #include "AsciiString.h"
 
-namespace Core {
-} // Core
+Core::AsciiString::AsciiString() noexcept: List() {
+
+}
+
+Core::AsciiString::AsciiString(System::Allocator &allocator) noexcept: List(allocator) {
+
+}
+
+Core::AsciiString::AsciiString(System::IAllocator *allocator) noexcept: List(allocator) {
+
+}

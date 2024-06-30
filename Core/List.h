@@ -7,6 +7,7 @@
 
 #include "System/Allocator.h"
 #include "Core/Math.h"
+#include "Core/MemoryConsumer.h"
 
 namespace Core {
 
@@ -16,15 +17,14 @@ namespace Core {
     };
 
     template<class ValueType>
-    class REGULAR_API List {
+    class REGULAR_API List : public MemoryConsumer {
         ValueType *mArray = {};
-        System::IAllocator *mAllocator = {};
         unsigned long mSize = {};
         unsigned long mCapacity = {};
 
         Core::Expected<Core::Empty, System::AllocationError> Grow() noexcept {
             mCapacity *= 2;
-            auto allocationResult = mAllocator->Resize(mArray, mCapacity* sizeof(ValueType), false);
+            auto allocationResult = mAllocator->Resize(mArray, mCapacity * sizeof(ValueType), false);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 return Core::Empty();
@@ -34,8 +34,23 @@ namespace Core {
         }
 
     public:
+
         List() noexcept: mSize(0), mCapacity(2) {
-            auto allocationResult = mAllocator->Allocate(mCapacity* sizeof(ValueType), false);
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+            if (allocationResult.HasValue()) {
+                mArray = static_cast<ValueType *>(allocationResult.GetValue());
+            }
+        }
+
+        List(System::Allocator &allocator) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(2) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+            if (allocationResult.HasValue()) {
+                mArray = static_cast<ValueType *>(allocationResult.GetValue());
+            }
+        }
+
+        List(System::IAllocator *allocator) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(2) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
@@ -52,7 +67,7 @@ namespace Core {
 
         // Copy constructor
         List(const List &other) noexcept: mSize(other.mSize), mCapacity(other.mCapacity) {
-            auto allocationResult = mAllocator->Allocate(mCapacity* sizeof(ValueType), false);
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 mAllocator->Copy(other.mArray, mArray, mSize);
@@ -66,7 +81,7 @@ namespace Core {
                 if (deallocationResult.HasValue()) {
                     mSize = other.mSize;
                     mCapacity = other.mCapacity;
-                    auto allocationResult = mAllocator->Allocate(mCapacity* sizeof(ValueType), false);
+                    auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
                     if (allocationResult.HasValue()) {
                         mArray = static_cast<ValueType *>(allocationResult.GetValue());
                         mAllocator->Copy(other.mArray, mArray, mSize);
@@ -119,11 +134,11 @@ namespace Core {
             return !mSize;
         }
 
-        template <typename T, unsigned long N>
+        template<typename T, unsigned long N>
         Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N]) noexcept {
             for (unsigned long i = 0; i < N; ++i) {
                 auto result = Add(array[i]);
-                if (!result.HasValue()){
+                if (!result.HasValue()) {
                     return result.GetError();
                 }
             }
@@ -131,11 +146,11 @@ namespace Core {
             return Core::Empty();
         }
 
-        template <typename T, unsigned long N>
+        template<typename T, unsigned long N>
         Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N], unsigned long count) noexcept {
-            for (unsigned long i = 0; i < Core::Math::Min(N,count); ++i) {
+            for (unsigned long i = 0; i < Core::Math::Min(N, count); ++i) {
                 auto result = Add(array[i]);
-                if (!result.HasValue()){
+                if (!result.HasValue()) {
                     return result.GetError();
                 }
             }
@@ -143,7 +158,7 @@ namespace Core {
             return Core::Empty();
         }
 
-        Core::Expected<ValueType*, Core::ListError> Add(ValueType value) noexcept {
+        Core::Expected<ValueType *, Core::ListError> Add(ValueType value) noexcept {
             if (mSize == mCapacity) {
                 auto allocationResult = Grow();
                 if (!allocationResult.HasValue()) {
@@ -178,14 +193,14 @@ namespace Core {
             return Core::Empty();
         }
 
-        Core::Expected<ValueType*, Core::ListError> Get() const noexcept {
+        Core::Expected<ValueType *, Core::ListError> Get() const noexcept {
             if (!mSize) {
                 return ListError::IndexOutOfRange;
             }
             return mArray;
         }
 
-        Core::Expected<ValueType*, Core::ListError> Get(int index) const noexcept {
+        Core::Expected<ValueType *, Core::ListError> Get(int index) const noexcept {
             if (index < 0 || index >= mSize) {
                 return ListError::IndexOutOfRange;
             }
