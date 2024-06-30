@@ -1,7 +1,11 @@
 #include "Console.h"
 
 #include <windows.h>
-#include <cstdio>
+
+System::Console::Console()
+{
+    AllocConsole();
+}
 
 Core::Expected<unsigned long, System::ConsoleError>
 System::Console::Write(const char *message, unsigned long messageLength) noexcept {
@@ -11,7 +15,7 @@ System::Console::Write(const char *message, unsigned long messageLength) noexcep
         return ConsoleError::InvalidConsoleType;
     }
 
-    if (!WriteConsoleA(hConsole, message, messageLength, &written, NULL)) {
+    if (!WriteFile(hConsole, message, messageLength, &written, NULL)) {
         DWORD errorCode = GetLastError();
         switch (errorCode) {
             case ERROR_INVALID_FUNCTION:

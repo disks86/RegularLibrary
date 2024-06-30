@@ -31,13 +31,14 @@ class REGULAR_API Console
 {
     char mBuffer[255] = {};
 public:
+    Console();
     Core::Expected<unsigned long , System::ConsoleError> Write(const char* message, unsigned long messageLength) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Write(const Core::AsciiString& message) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Read(Core::AsciiString& message) noexcept;
 
     template <typename T, unsigned long N>
     Core::Expected<unsigned long , System::ConsoleError> Write(const T (&array)[N]) noexcept {
-        return Write(array,N);
+        return Write(array,N-1);
     }
 };
 
