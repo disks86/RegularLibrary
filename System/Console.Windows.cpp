@@ -1,31 +1,21 @@
 #include "Console.h"
 
 #include <windows.h>
-
-System::Console::Console(ConsoleType consoleType) noexcept {
-    switch (consoleType) {
-        case ConsoleType::Input:
-            mNativeHandle = GetStdHandle(STD_INPUT_HANDLE);
-            break;
-        case ConsoleType::Output:
-            mNativeHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-            break;
-        default:
-            mNativeHandle = GetStdHandle(STD_ERROR_HANDLE);
-            break;
-    }
-}
+#include <cstdio>
 
 Core::Expected<unsigned long, System::ConsoleError>
 System::Console::Write(const char *message, unsigned long messageLength) noexcept {
-    if (mNativeHandle == INVALID_HANDLE_VALUE) {
+    DWORD written;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hConsole == INVALID_HANDLE_VALUE) {
         return ConsoleError::InvalidConsoleType;
     }
 
-    DWORD written;
-    if (!WriteConsoleA(mNativeHandle, message, messageLength, &written, NULL)) {
+    if (!WriteConsoleA(hConsole, message, messageLength, &written, NULL)) {
         DWORD errorCode = GetLastError();
         switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+                return ConsoleError::InvalidConsoleType;
             case ERROR_INVALID_HANDLE:
                 return ConsoleError::InvalidConsoleType;
             case ERROR_INVALID_PARAMETER:
@@ -51,13 +41,32 @@ Core::Expected<unsigned long, System::ConsoleError> System::Console::Write(const
 }
 
 Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::AsciiString &message) noexcept {
-    if (mNativeHandle == INVALID_HANDLE_VALUE) {
+    DWORD numberOfCharsRead;
+    HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
+    if (hConsole == INVALID_HANDLE_VALUE) {
         return ConsoleError::InvalidConsoleType;
     }
 
-    DWORD numberOfCharsRead;
-    if (!ReadConsoleA(mNativeHandle, mBuffer, 255, &numberOfCharsRead, NULL)) {
-        return ConsoleError::GenericError;
+    if (!ReadConsoleA(hConsole, mBuffer, 255, &numberOfCharsRead, NULL)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+                return ConsoleError::InvalidConsoleType;
+            case ERROR_INVALID_HANDLE:
+                return ConsoleError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return ConsoleError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return ConsoleError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return ConsoleError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return ConsoleError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return ConsoleError::Aborted;
+            default:
+                return ConsoleError::GenericError;
+        }
     }
 
     auto result = message.Clear();

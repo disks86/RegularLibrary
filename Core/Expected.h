@@ -16,7 +16,7 @@ namespace Core {
     template<class ValueType, class ErrorType>
     class REGULAR_API Expected {
         bool mHasValue = false;
-        ExpectedValue<ValueType,ErrorType> mExpectedValue;
+        ExpectedValue<ValueType, ErrorType> mExpectedValue;
     public:
         inline Expected(ValueType valueType) noexcept {
             mHasValue = true;
@@ -26,6 +26,15 @@ namespace Core {
         inline Expected(ErrorType errorType) noexcept {
             mHasValue = false;
             mExpectedValue.ErrorType = errorType;
+        }
+
+        inline Expected(Expected const &other) noexcept {
+            mHasValue = other.mHasValue;
+            if (other.mHasValue) {
+                mExpectedValue.ValueType = other.mExpectedValue.ValueType;
+            } else {
+                mExpectedValue.ErrorType = other.mExpectedValue.ErrorType;
+            }
         }
 
         inline ValueType GetValueOr(ValueType valueType) const noexcept {
