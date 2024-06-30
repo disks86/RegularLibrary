@@ -119,9 +119,9 @@ namespace Core {
             return !mSize;
         }
 
-        template <typename T, size_t N>
+        template <typename T, unsigned long N>
         Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N]) noexcept {
-            for (size_t i = 0; i < N; ++i) {
+            for (unsigned long i = 0; i < N; ++i) {
                 auto result = Add(array[i]);
                 if (!result.HasValue()){
                     return result.GetError();
@@ -131,9 +131,9 @@ namespace Core {
             return Core::Empty();
         }
 
-        template <typename T, size_t N>
-        Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N], size_t count) noexcept {
-            for (size_t i = 0; i < Core::Math::Min(N,count); ++i) {
+        template <typename T, unsigned long N>
+        Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N], unsigned long count) noexcept {
+            for (unsigned long i = 0; i < Core::Math::Min(N,count); ++i) {
                 auto result = Add(array[i]);
                 if (!result.HasValue()){
                     return result.GetError();

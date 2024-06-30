@@ -1,6 +1,8 @@
 #ifndef REGULARLIBRARY_H
 #define REGULARLIBRARY_H
 
+#include "Export.h"
+
 #include "System/Allocator.h"
 #include "System/Console.h"
 
