@@ -29,7 +29,6 @@ namespace System {
     };
 
     class REGULAR_API Allocator : public IAllocator {
-        void* mNativeHandle;
     public:
         Allocator();
 

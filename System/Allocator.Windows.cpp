@@ -5,15 +5,10 @@
  System::Allocator System::Allocator::Default;
 
 System::Allocator::Allocator() {
-    mNativeHandle = GetProcessHeap();
 }
 
 Core::Expected<void *, System::AllocationError> System::Allocator::Allocate(unsigned long size, bool initialize) noexcept {
-    if (mNativeHandle == NULL) {
-        return AllocationError::GenericFailure;
-    }
-
-    LPVOID memory = HeapAlloc(mNativeHandle, initialize ? HEAP_ZERO_MEMORY : 0, size);
+    LPVOID memory = HeapAlloc(GetProcessHeap(), initialize ? HEAP_ZERO_MEMORY : 0, size);
     if (memory == NULL) {
         return AllocationError::OutOfMemory;
     }
@@ -22,11 +17,7 @@ Core::Expected<void *, System::AllocationError> System::Allocator::Allocate(unsi
 }
 
 Core::Expected<Core::Empty, System::AllocationError> System::Allocator::Deallocate(void *ptr) noexcept {
-    if (mNativeHandle == NULL) {
-        return AllocationError::GenericFailure;
-    }
-
-    if (!HeapFree(mNativeHandle, 0, ptr)) {
+    if (!HeapFree(GetProcessHeap(), 0, ptr)) {
         return AllocationError::GenericFailure;
     } else {
         return Core::Empty();
@@ -34,11 +25,7 @@ Core::Expected<Core::Empty, System::AllocationError> System::Allocator::Dealloca
 }
 
 Core::Expected<void *, System::AllocationError> System::Allocator::Resize(void *ptr, unsigned long size, bool initialize) noexcept {
-    if (mNativeHandle == NULL) {
-        return AllocationError::GenericFailure;
-    }
-
-    void* resizedBlock = HeapReAlloc(mNativeHandle, initialize ? HEAP_ZERO_MEMORY : 0, ptr, size);
+    void* resizedBlock = HeapReAlloc(GetProcessHeap(), initialize ? HEAP_ZERO_MEMORY : 0, ptr, size);
     if (resizedBlock == NULL) {
         return AllocationError::OutOfMemory;
     }

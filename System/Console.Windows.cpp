@@ -41,11 +41,16 @@ System::Console::Write(const char *message, unsigned long messageLength) noexcep
 }
 
 Core::Expected<unsigned long, System::ConsoleError> System::Console::Write(const Core::AsciiString &message) noexcept {
-    return Write(message.Get(), message.GetLength());
+    auto result = message.Get();
+    if (!result.HasValue()) {
+        return ConsoleError::GenericError;
+    }
+
+    return Write(result.GetValue(), message.GetLength());
 }
 
 Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::AsciiString &message) noexcept {
-    DWORD numberOfCharsRead;
+    DWORD numberOfCharsRead=0;
     HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
         return ConsoleError::InvalidConsoleType;
@@ -77,9 +82,15 @@ Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::
     if (!result.HasValue()) {
         return ConsoleError::GenericError;
     }
+
     result = message.Add(mBuffer, numberOfCharsRead);
     if (!result.HasValue()) {
-        return ConsoleError::GenericError;
+        switch (result.GetError()) {
+            case Core::ListError::OutOfMemory:
+                return ConsoleError::OutOfMemory;
+            default:
+                return ConsoleError::GenericError;
+        }
     }
 
     return numberOfCharsRead;

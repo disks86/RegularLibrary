@@ -24,7 +24,6 @@ namespace Core {
 
     template<class ValueType, class ErrorType>
     class REGULAR_API Expected : public ExpectedBase {
-        bool mHasValue = false;
         ExpectedValue<ValueType, ErrorType> mExpectedValue;
     public:
         inline Expected(ValueType valueType) noexcept {

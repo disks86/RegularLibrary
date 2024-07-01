@@ -24,12 +24,20 @@ namespace Core {
 
         Core::Expected<Core::Empty, System::AllocationError> Grow() noexcept {
             mCapacity *= 2;
-            auto allocationResult = mAllocator->Resize(mArray, mCapacity * sizeof(ValueType), false);
-            if (allocationResult.HasValue()) {
+            if (mArray == nullptr) {
+                auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+                if (!allocationResult.HasValue()) {
+                    return System::AllocationError::OutOfMemory;
+                }
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 return Core::Empty();
             } else {
-                return System::AllocationError::OutOfMemory;
+                auto allocationResult = mAllocator->Resize(mArray, mCapacity * sizeof(ValueType), false);
+                if (!allocationResult.HasValue()) {
+                    return System::AllocationError::OutOfMemory;
+                }
+                mArray = static_cast<ValueType *>(allocationResult.GetValue());
+                return Core::Empty();
             }
         }
 
@@ -159,7 +167,7 @@ namespace Core {
         }
 
         Core::Expected<ValueType *, Core::ListError> Add(ValueType value) noexcept {
-            if (mSize == mCapacity) {
+            if (mSize == mCapacity || mArray == nullptr) {
                 auto allocationResult = Grow();
                 if (!allocationResult.HasValue()) {
                     return ListError::OutOfMemory;
@@ -185,10 +193,12 @@ namespace Core {
         }
 
         Core::Expected<Core::Empty, Core::ListError> Clear() noexcept {
-            for (unsigned long i = 0; i < mSize; ++i) {
-                mArray[i].~ValueType();
+            if(!IsEmpty()) {
+                for (unsigned long i = 0; i < mSize; ++i) {
+                    mArray[i].~ValueType();
+                }
+                mSize = 0;
             }
-            mSize = 0;
 
             return Core::Empty();
         }
