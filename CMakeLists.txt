@@ -41,7 +41,9 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Core/Math.h
         Core/Expected.cpp
         Core/MemoryConsumer.cpp
-        Core/MemoryConsumer.h)
+        Core/MemoryConsumer.h
+        Core/UnicodeString.cpp
+        Core/UnicodeString.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_REGULARLIBRARY)
 
