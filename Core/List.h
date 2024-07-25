@@ -13,7 +13,8 @@ namespace Core {
 
     enum class REGULAR_API ListError {
         IndexOutOfRange,
-        OutOfMemory
+        OutOfMemory,
+        ElementNotFound
     };
 
     template<class ValueType>
@@ -135,6 +136,11 @@ namespace Core {
             return *this;
         }
 
+        List& operator+=(const List& other) noexcept {
+            this->Add(other);
+            return *this;
+        }
+
         unsigned long GetSize() const noexcept {
             return mSize;
         }
@@ -179,6 +185,17 @@ namespace Core {
             return Core::Empty();
         }
 
+        Core::Expected<Core::Empty, Core::ListError> Add(const List& other) noexcept {
+            for (unsigned long i = 0; i < other.mSize; ++i) {
+                auto result = Add(other.mArray[i]);
+                if (!result.HasValue()) {
+                    return result.GetError();
+                }
+            }
+
+            return Core::Empty();
+        }
+
         Core::Expected<ValueType *, Core::ListError> Add(ValueType value) noexcept {
             if (mSize == mCapacity || mArray == nullptr) {
                 auto allocationResult = Grow();
@@ -201,6 +218,27 @@ namespace Core {
                 mArray[i] = mArray[i + 1];
             }
             --mSize;
+
+            return Empty();
+        }
+
+        Core::Expected<Core::Empty, Core::ListError> Remove(ValueType value) noexcept {
+            unsigned long i;
+            for (i = 0; i < mSize; ++i) {
+                if (mArray[i] == value) {
+                    mArray[i].~ValueType();
+                    break;
+                }
+            }
+
+            if (i < mSize) {
+                for (int j = i; j < mSize - 1; ++j) {
+                    mArray[j] = mArray[j + 1];
+                }
+                --mSize;
+            } else {
+                return ListError::ElementNotFound;
+            }
 
             return Empty();
         }
@@ -237,6 +275,13 @@ namespace Core {
             mArray[index] = value;
 
             return Empty();
+        }
+
+        template <typename Func>
+        void ForEach(Func func) {
+            for (int i = 0; i < mSize; ++i) {
+                func(mArray[i]);
+            }
         }
     };
 

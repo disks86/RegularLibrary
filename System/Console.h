@@ -32,6 +32,7 @@ class REGULAR_API Console
     char mBuffer[255] = {};
 public:
     Console();
+    Core::Expected<unsigned long , System::ConsoleError> Write(const char message) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Write(const char* message, unsigned long messageLength) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Write(const Core::AsciiString& message) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Read(Core::AsciiString& message) noexcept;
