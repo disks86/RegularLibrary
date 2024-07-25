@@ -10,7 +10,7 @@ namespace Core {
         System::IAllocator *mAllocator = {};
     public:
         MemoryConsumer() noexcept;
-        MemoryConsumer(System::Allocator& allocator) noexcept;
+        MemoryConsumer(System::IAllocator& allocator) noexcept;
         MemoryConsumer(System::IAllocator* allocator) noexcept;
     };
 

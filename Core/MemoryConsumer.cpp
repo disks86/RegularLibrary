@@ -8,7 +8,7 @@ Core::MemoryConsumer::MemoryConsumer() noexcept : mAllocator(&System::Allocator:
 
 }
 
-Core::MemoryConsumer::MemoryConsumer(System::Allocator& allocator) noexcept : mAllocator(&allocator) {
+Core::MemoryConsumer::MemoryConsumer(System::IAllocator& allocator) noexcept : mAllocator(&allocator) {
 
 }
 

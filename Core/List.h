@@ -17,7 +17,7 @@ namespace Core {
     };
 
     template<class ValueType>
-    class REGULAR_API List : public MemoryConsumer {
+    class List : public MemoryConsumer {
         ValueType *mArray = {};
         unsigned long mSize = {};
         unsigned long mCapacity = {};
@@ -25,14 +25,14 @@ namespace Core {
         Core::Expected<Core::Empty, System::AllocationError> Grow() noexcept {
             mCapacity *= 2;
             if (mArray == nullptr) {
-                auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+                auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
                 if (!allocationResult.HasValue()) {
                     return System::AllocationError::OutOfMemory;
                 }
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 return Core::Empty();
             } else {
-                auto allocationResult = mAllocator->Resize(mArray, mCapacity * sizeof(ValueType), false);
+                auto allocationResult = mAllocator->Resize(mArray, mCapacity * sizeof(ValueType), true);
                 if (!allocationResult.HasValue()) {
                     return System::AllocationError::OutOfMemory;
                 }
@@ -43,22 +43,22 @@ namespace Core {
 
     public:
 
-        List() noexcept: mSize(0), mCapacity(2) {
-            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+        List(unsigned long capacity = 2) noexcept: mSize(0), mCapacity(capacity) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
         }
 
-        List(System::Allocator &allocator) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(2) {
-            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+        List(System::IAllocator &allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(capacity) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
         }
 
-        List(System::IAllocator *allocator) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(2) {
-            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+        List(System::IAllocator *allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(capacity) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
@@ -75,7 +75,7 @@ namespace Core {
 
         // Copy constructor
         List(const List &other) noexcept: mSize(other.mSize), mCapacity(other.mCapacity) {
-            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 mAllocator->Copy(other.mArray, mArray, mSize);
@@ -89,7 +89,7 @@ namespace Core {
                 if (deallocationResult.HasValue()) {
                     mSize = other.mSize;
                     mCapacity = other.mCapacity;
-                    auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), false);
+                    auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
                     if (allocationResult.HasValue()) {
                         mArray = static_cast<ValueType *>(allocationResult.GetValue());
                         mAllocator->Copy(other.mArray, mArray, mSize);
@@ -119,6 +119,19 @@ namespace Core {
                     other.mArray = nullptr;
                 }
             }
+            return *this;
+        }
+
+        List& operator=(const ValueType& value) noexcept {
+            auto result = this->Clear();
+            if (result.HasValue()) {
+                this->Add(value);
+            }
+            return *this;
+        }
+
+        List& operator+=(const ValueType& value) noexcept {
+            this->Add(value);
             return *this;
         }
 
@@ -226,6 +239,9 @@ namespace Core {
             return Empty();
         }
     };
+
+    template <typename T>
+    using Optional = Core::List<T>;
 
 } // Core
 
