@@ -10,14 +10,7 @@
 
 namespace Core {
 
-    class REGULAR_API AsciiString : public List<char> {
-    public:
-        AsciiString() noexcept;
-
-        AsciiString(System::Allocator &allocator) noexcept;
-
-        AsciiString(System::IAllocator *allocator) noexcept;
-    };
+    typedef List<char> AsciiString;
 
 } // Core
 
