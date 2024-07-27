@@ -12,6 +12,16 @@
 
 namespace Core {
 
+    template <typename T>
+    struct IsCharacterType {
+        static constexpr bool value = false;
+    };
+
+    template <>
+    struct IsCharacterType<char> {
+        static constexpr bool value = true;
+    };
+
     enum class REGULAR_API ListError {
         IndexOutOfRange,
         OutOfMemory,
@@ -52,7 +62,7 @@ namespace Core {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 auto copyResult = mAllocator->Copy(array, mArray, (N * sizeof(ValueType)));
                 if (copyResult.HasValue()) {
-                    mSize = (mCapacity - 1);
+                    mSize = (mCapacity - (IsCharacterType<T>::value ? 2 : 1));
                 }
             }
         }
@@ -65,7 +75,7 @@ namespace Core {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 auto copyResult = mAllocator->Copy(array, mArray, (N * sizeof(ValueType)));
                 if (copyResult.HasValue()) {
-                    mSize = (mCapacity - 1);
+                    mSize = (mCapacity - (IsCharacterType<T>::value ? 2 : 1));
                 }
             }
         }
@@ -78,7 +88,7 @@ namespace Core {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 auto copyResult = mAllocator->Copy(array, mArray, (N * sizeof(ValueType)));
                 if (copyResult.HasValue()) {
-                    mSize = (mCapacity - 1);
+                    mSize = (mCapacity - (IsCharacterType<T>::value ? 2 : 1));
                 }
             }
         }
