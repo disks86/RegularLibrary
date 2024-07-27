@@ -3,6 +3,7 @@
 
 #include "Export.h"
 #include "Core/Expected.h"
+#include "Core/Math.h"
 
 namespace System {
 
@@ -17,15 +18,37 @@ namespace System {
 
         virtual Core::Expected<Core::Empty, System::AllocationError> Deallocate(void *ptr) = 0;
 
-        virtual Core::Expected<void *, System::AllocationError> Resize(void *ptr, unsigned long size, bool initialize) = 0;
+        virtual Core::Expected<void *, System::AllocationError>
+        Resize(void *ptr, unsigned long size, bool initialize) = 0;
 
-        virtual Core::Expected<Core::Empty, System::AllocationError> Copy(void *sourcePointer, void *targetPointer, unsigned long size) = 0;
+        virtual Core::Expected<Core::Empty, System::AllocationError>
+        Copy(void *sourcePointer, void *targetPointer, unsigned long size) = 0;
 
-        virtual Core::Expected<Core::Empty, System::AllocationError> Move(void *sourcePointer, void *targetPointer, unsigned long size) = 0;
+        virtual Core::Expected<Core::Empty, System::AllocationError>
+        Move(void *sourcePointer, void *targetPointer, unsigned long size) = 0;
 
         virtual Core::Expected<Core::Empty, System::AllocationError> Zero(void *ptr, unsigned long size) = 0;
 
+        template<typename SourceType, unsigned long SourceSize, typename TargetType, unsigned long TargetSize>
+        Core::Expected<Core::Empty, System::AllocationError>
+        Copy(const SourceType (&source)[SourceSize], TargetType (&target)[TargetSize]) {
+            unsigned long size = Core::Math::Min(SourceSize * sizeof(SourceType), TargetSize * sizeof(TargetType));
+            return Copy((void*)&source, (void*)&target, size);
+        }
 
+        template<typename SourceType, typename TargetType, unsigned long TargetSize>
+        Core::Expected<Core::Empty, System::AllocationError>
+        Copy(const SourceType *source, unsigned long sourceSize, TargetType (&target)[TargetSize]) {
+            unsigned long size = Core::Math::Min(sourceSize * sizeof(SourceType), TargetSize * sizeof(TargetType));
+            return Copy((void*)&source, (void*)&target, size);
+        }
+
+        template<typename SourceType, unsigned long SourceSize, typename TargetType>
+        Core::Expected<Core::Empty, System::AllocationError>
+        Copy(const SourceType (&source)[SourceSize], TargetType *target, unsigned long targetSize) {
+            unsigned long size = Core::Math::Min(SourceSize * sizeof(SourceType), targetSize * sizeof(TargetType));
+            return Copy((void*)&source, (void*)&target, size);
+        }
     };
 
     class REGULAR_API Allocator : public IAllocator {
@@ -38,9 +61,11 @@ namespace System {
 
         Core::Expected<void *, System::AllocationError> Resize(void *ptr, unsigned long size, bool initialize) noexcept;
 
-        Core::Expected<Core::Empty, System::AllocationError> Copy(void *sourcePointer, void *targetPointer, unsigned long size) noexcept;
+        Core::Expected<Core::Empty, System::AllocationError>
+        Copy(void *sourcePointer, void *targetPointer, unsigned long size) noexcept;
 
-        Core::Expected<Core::Empty, System::AllocationError> Move(void *sourcePointer, void *targetPointer, unsigned long size) noexcept;
+        Core::Expected<Core::Empty, System::AllocationError>
+        Move(void *sourcePointer, void *targetPointer, unsigned long size) noexcept;
 
         Core::Expected<Core::Empty, System::AllocationError> Zero(void *ptr, unsigned long size) noexcept;
 

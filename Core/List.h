@@ -8,6 +8,7 @@
 #include "System/Allocator.h"
 #include "Core/Math.h"
 #include "Core/MemoryConsumer.h"
+#include "Core/Pair.h"
 
 namespace Core {
 
@@ -17,7 +18,7 @@ namespace Core {
         ElementNotFound
     };
 
-    template<class ValueType>
+    template<typename ValueType>
     class List : public MemoryConsumer {
         ValueType *mArray = {};
         unsigned long mSize = {};
@@ -44,6 +45,41 @@ namespace Core {
 
     public:
 
+        template<typename T, unsigned long N>
+        List(const T (&array)[N]) noexcept: mSize(0), mCapacity(N + 1) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
+            if (allocationResult.HasValue()) {
+                auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
+                if (copyResult.HasValue()) {
+                    mSize = (mCapacity - 1);
+                }
+            }
+        }
+
+        template<typename T, unsigned long N>
+        List(System::IAllocator &allocator, const T (&array)[N]) noexcept: MemoryConsumer(allocator), mSize(0),
+                                                                           mCapacity(N + 1) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
+            if (allocationResult.HasValue()) {
+                auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
+                if (copyResult.HasValue()) {
+                    mSize = (mCapacity - 1);
+                }
+            }
+        }
+
+        template<typename T, unsigned long N>
+        List(System::IAllocator *allocator, const T (&array)[N]) noexcept: MemoryConsumer(allocator), mSize(0),
+                                                                           mCapacity(N + 1) {
+            auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
+            if (allocationResult.HasValue()) {
+                auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
+                if (copyResult.HasValue()) {
+                    mSize = (mCapacity - 1);
+                }
+            }
+        }
+
         List(unsigned long capacity = 2) noexcept: mSize(0), mCapacity(capacity) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
@@ -51,14 +87,16 @@ namespace Core {
             }
         }
 
-        List(System::IAllocator &allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(capacity) {
+        List(System::IAllocator &allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0),
+                                                                                  mCapacity(capacity) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
         }
 
-        List(System::IAllocator *allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0), mCapacity(capacity) {
+        List(System::IAllocator *allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0),
+                                                                                  mCapacity(capacity) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
@@ -123,7 +161,7 @@ namespace Core {
             return *this;
         }
 
-        List& operator=(const ValueType& value) noexcept {
+        List &operator=(const ValueType &value) noexcept {
             auto result = this->Clear();
             if (result.HasValue()) {
                 this->Add(value);
@@ -131,12 +169,12 @@ namespace Core {
             return *this;
         }
 
-        List& operator+=(const ValueType& value) noexcept {
+        List &operator+=(const ValueType &value) noexcept {
             this->Add(value);
             return *this;
         }
 
-        List& operator+=(const List& other) noexcept {
+        List &operator+=(const List &other) noexcept {
             this->Add(other);
             return *this;
         }
@@ -185,7 +223,7 @@ namespace Core {
             return Core::Empty();
         }
 
-        Core::Expected<Core::Empty, Core::ListError> Add(const List& other) noexcept {
+        Core::Expected<Core::Empty, Core::ListError> Add(const List &other) noexcept {
             for (unsigned long i = 0; i < other.mSize; ++i) {
                 auto result = Add(other.mArray[i]);
                 if (!result.HasValue()) {
@@ -244,7 +282,7 @@ namespace Core {
         }
 
         Core::Expected<Core::Empty, Core::ListError> Clear() noexcept {
-            if(!IsEmpty()) {
+            if (!IsEmpty()) {
                 for (unsigned long i = 0; i < mSize; ++i) {
                     mArray[i].~ValueType();
                 }
@@ -268,6 +306,16 @@ namespace Core {
             return mArray[index];
         }
 
+        Core::Expected<ValueType *, Core::ListError> Get(const ValueType &value) const noexcept {
+            for (unsigned long i = 0; i < mSize; ++i) {
+                if (mArray[i] == value) {
+                    return mArray[i];
+                }
+            }
+
+            return ListError::ElementNotFound;
+        }
+
         Core::Expected<Core::Empty, Core::ListError> Set(int index, ValueType value) noexcept {
             if (index < 0 || index >= mSize) {
                 return ListError::IndexOutOfRange;
@@ -277,7 +325,7 @@ namespace Core {
             return Empty();
         }
 
-        template <typename Func>
+        template<typename Func>
         void ForEach(Func func) {
             for (int i = 0; i < mSize; ++i) {
                 func(mArray[i]);
@@ -285,8 +333,14 @@ namespace Core {
         }
     };
 
-    template <typename T>
+    template<typename T>
     using Optional = Core::List<T>;
+
+    template<typename KeyType, typename ValueType>
+    using Dictionary = Core::List<Core::Pair<KeyType, ValueType>>;
+
+    template<typename KeyType, typename ValueType>
+    using Map = Core::List<Core::Pair<KeyType, ValueType>>;
 
 } // Core
 

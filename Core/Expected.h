@@ -16,13 +16,13 @@ namespace Core {
         bool HasValue() const noexcept;
     };
 
-    template<class ValueType, class ErrorType>
+    template<typename ValueType, typename ErrorType>
     union REGULAR_API ExpectedValue {
         ValueType ValueType;
         ErrorType ErrorType;
     };
 
-    template<class ValueType, class ErrorType>
+    template<typename ValueType, typename ErrorType>
     class REGULAR_API Expected : public ExpectedBase {
         ExpectedValue<ValueType, ErrorType> mExpectedValue;
     public:
