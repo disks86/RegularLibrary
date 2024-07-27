@@ -49,6 +49,7 @@ namespace Core {
         List(const T (&array)[N]) noexcept: mSize(0), mCapacity(N + 1) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
+                mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
                 if (copyResult.HasValue()) {
                     mSize = (mCapacity - 1);
@@ -61,6 +62,7 @@ namespace Core {
                                                                            mCapacity(N + 1) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
+                mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
                 if (copyResult.HasValue()) {
                     mSize = (mCapacity - 1);
@@ -73,6 +75,7 @@ namespace Core {
                                                                            mCapacity(N + 1) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
+                mArray = static_cast<ValueType *>(allocationResult.GetValue());
                 auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
                 if (copyResult.HasValue()) {
                     mSize = (mCapacity - 1);
@@ -114,6 +117,10 @@ namespace Core {
 
         // Copy constructor
         List(const List &other) noexcept: mSize(other.mSize), mCapacity(other.mCapacity) {
+            if (mAllocator == nullptr) {
+                mAllocator = other.mAllocator;
+            }
+
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
@@ -124,6 +131,10 @@ namespace Core {
         // Copy assignment operator
         List &operator=(const List &other) noexcept {
             if (this != &other) {
+                if (mAllocator == nullptr) {
+                    mAllocator = other.mAllocator;
+                }
+
                 auto deallocationResult = mAllocator->Deallocate(mArray);
                 if (deallocationResult.HasValue()) {
                     mSize = other.mSize;
@@ -140,6 +151,10 @@ namespace Core {
 
         // Move constructor
         List(List &&other) noexcept: mSize(other.mSize), mCapacity(other.mCapacity), mArray(other.mArray) {
+            if (mAllocator == nullptr) {
+                mAllocator = other.mAllocator;
+            }
+
             other.mSize = 0;
             other.mCapacity = 0;
             other.mArray = nullptr;
@@ -148,6 +163,10 @@ namespace Core {
         // Move assignment operator
         List &operator=(List &&other) noexcept {
             if (this != &other) {
+                if (mAllocator == nullptr) {
+                    mAllocator = other.mAllocator;
+                }
+
                 auto allocationResult = mAllocator->Deallocate(mArray);
                 if (allocationResult.HasValue()) {
                     mSize = other.mSize;

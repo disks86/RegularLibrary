@@ -17,26 +17,26 @@ namespace Core {
     };
 
     template<typename ValueType, typename ErrorType>
-    union REGULAR_API ExpectedValue {
+    union ExpectedValue {
         ValueType ValueType;
         ErrorType ErrorType;
     };
 
     template<typename ValueType, typename ErrorType>
-    class REGULAR_API Expected : public ExpectedBase {
+    class Expected : public ExpectedBase {
         ExpectedValue<ValueType, ErrorType> mExpectedValue;
     public:
-        inline Expected(ValueType valueType) noexcept {
+        Expected(ValueType valueType) noexcept {
             mHasValue = true;
             mExpectedValue.ValueType = valueType;
         }
 
-        inline Expected(ErrorType errorType) noexcept {
+        Expected(ErrorType errorType) noexcept {
             mHasValue = false;
             mExpectedValue.ErrorType = errorType;
         }
 
-        inline Expected(Expected const &other) noexcept {
+        Expected(Expected const &other) noexcept {
             mHasValue = other.mHasValue;
             if (other.mHasValue) {
                 mExpectedValue.ValueType = other.mExpectedValue.ValueType;
@@ -45,7 +45,7 @@ namespace Core {
             }
         }
 
-        inline ValueType GetValueOr(ValueType valueType) const noexcept {
+        ValueType GetValueOr(ValueType valueType) const noexcept {
             if (mHasValue) {
                 return mExpectedValue.ValueType;
             } else {
@@ -53,19 +53,19 @@ namespace Core {
             }
         }
 
-        inline ValueType GetValue() const noexcept {
+        ValueType GetValue() const noexcept {
             return mExpectedValue.ValueType;
         }
 
-        inline ErrorType GetError() const noexcept {
+        ErrorType GetError() const noexcept {
             return mExpectedValue.ErrorType;
         }
 
-        inline operator ValueType() const noexcept {
+        operator ValueType() const noexcept {
             return mExpectedValue.ValueType;
         }
 
-        inline operator ErrorType() const noexcept {
+        operator ErrorType() const noexcept {
             return mExpectedValue.ErrorType;
         }
     };

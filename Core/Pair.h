@@ -12,7 +12,9 @@ namespace Core {
             return (Key <=> other.Key);
         }
 
-        Pair(KeyType key) : Key(key),Value({}) {}
+        Pair(const KeyType& key) : Key(key),Value({}) {}
+        Pair(const KeyType& key, const ValueType& value) : Key(key),Value(value) {}
+
 
         operator ValueType() const {
             return Value;
