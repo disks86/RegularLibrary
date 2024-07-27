@@ -22,6 +22,11 @@ namespace Core {
         static constexpr bool value = true;
     };
 
+    template <>
+    struct IsCharacterType<wchar_t> {
+        static constexpr bool value = true;
+    };
+
     enum class REGULAR_API ListError {
         IndexOutOfRange,
         OutOfMemory,
