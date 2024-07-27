@@ -8,16 +8,17 @@
 #include "Export.h"
 #include "Core/Expected.h"
 #include "Core/AsciiString.h"
+#include "Core/UnicodeString.h"
 
 namespace System {
 
-    enum class REGULAR_API ConsoleType{
+    enum class ConsoleType{
         Input,
         Output,
         Error
     };
 
-    enum class REGULAR_API ConsoleError {
+    enum class ConsoleError {
         GenericError,
         OutOfMemory,
         OutOfBuffer,
@@ -32,10 +33,15 @@ class REGULAR_API Console
     char mBuffer[255] = {};
 public:
     Console();
-    Core::Expected<unsigned long , System::ConsoleError> Write(const char message) noexcept;
+    Core::Expected<unsigned long , System::ConsoleError> Write(char message) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Write(const char* message, unsigned long messageLength) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Write(const Core::AsciiString& message) noexcept;
     Core::Expected<unsigned long , System::ConsoleError> Read(Core::AsciiString& message) noexcept;
+
+    Core::Expected<unsigned long , System::ConsoleError> Write(wchar_t message) noexcept;
+    Core::Expected<unsigned long , System::ConsoleError> Write(const wchar_t* message, unsigned long messageLength) noexcept;
+    Core::Expected<unsigned long , System::ConsoleError> Write(const Core::UnicodeString& message) noexcept;
+    Core::Expected<unsigned long , System::ConsoleError> Read(Core::UnicodeString& message) noexcept;
 
     template <typename T, unsigned long N>
     Core::Expected<unsigned long , System::ConsoleError> Write(const T (&array)[N]) noexcept {
