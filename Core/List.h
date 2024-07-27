@@ -50,7 +50,7 @@ namespace Core {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
-                auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
+                auto copyResult = mAllocator->Copy(array, mArray, (N * sizeof(ValueType)));
                 if (copyResult.HasValue()) {
                     mSize = (mCapacity - 1);
                 }
@@ -63,7 +63,7 @@ namespace Core {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
-                auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
+                auto copyResult = mAllocator->Copy(array, mArray, (N * sizeof(ValueType)));
                 if (copyResult.HasValue()) {
                     mSize = (mCapacity - 1);
                 }
@@ -76,7 +76,7 @@ namespace Core {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
-                auto copyResult = mAllocator->Copy(array, mArray, (mCapacity - 1));
+                auto copyResult = mAllocator->Copy(array, mArray, (N * sizeof(ValueType)));
                 if (copyResult.HasValue()) {
                     mSize = (mCapacity - 1);
                 }

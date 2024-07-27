@@ -32,22 +32,28 @@ namespace System {
         template<typename SourceType, unsigned long SourceSize, typename TargetType, unsigned long TargetSize>
         Core::Expected<Core::Empty, System::AllocationError>
         Copy(const SourceType (&source)[SourceSize], TargetType (&target)[TargetSize]) {
+            void* sourcePointer = (void*)&source;
+            void* targetPointer = (void*)&target;
             unsigned long size = Core::Math::Min(SourceSize * sizeof(SourceType), TargetSize * sizeof(TargetType));
-            return Copy((void*)&source, (void*)&target, size);
+            return Copy(sourcePointer, targetPointer, size);
         }
 
         template<typename SourceType, typename TargetType, unsigned long TargetSize>
         Core::Expected<Core::Empty, System::AllocationError>
         Copy(const SourceType *source, unsigned long sourceSize, TargetType (&target)[TargetSize]) {
+            void* sourcePointer = (void*)source;
+            void* targetPointer = (void*)&target;
             unsigned long size = Core::Math::Min(sourceSize * sizeof(SourceType), TargetSize * sizeof(TargetType));
-            return Copy((void*)&source, (void*)&target, size);
+            return Copy(sourcePointer, targetPointer, size);
         }
 
         template<typename SourceType, unsigned long SourceSize, typename TargetType>
         Core::Expected<Core::Empty, System::AllocationError>
         Copy(const SourceType (&source)[SourceSize], TargetType *target, unsigned long targetSize) {
+            void* sourcePointer = (void*)&source;
+            void* targetPointer = (void*)target;
             unsigned long size = Core::Math::Min(SourceSize * sizeof(SourceType), targetSize * sizeof(TargetType));
-            return Copy((void*)&source, (void*)&target, size);
+            return Copy(sourcePointer, targetPointer, size);
         }
     };
 
