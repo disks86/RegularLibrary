@@ -33,18 +33,20 @@ class REGULAR_API Console
     char mBuffer[255] = {};
 public:
     Console();
-    Core::Expected<unsigned long , System::ConsoleError> Write(char message) noexcept;
-    Core::Expected<unsigned long , System::ConsoleError> Write(const char* message, unsigned long messageLength) noexcept;
-    Core::Expected<unsigned long , System::ConsoleError> Write(const Core::AsciiString& message) noexcept;
-    Core::Expected<unsigned long , System::ConsoleError> Read(Core::AsciiString& message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(char message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(const char* message, Index messageLength) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(const Core::AsciiString& message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(const Core::AsciiStringView& message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Read(Core::AsciiString& message) noexcept;
 
-    Core::Expected<unsigned long , System::ConsoleError> Write(wchar_t message) noexcept;
-    Core::Expected<unsigned long , System::ConsoleError> Write(const wchar_t* message, unsigned long messageLength) noexcept;
-    Core::Expected<unsigned long , System::ConsoleError> Write(const Core::UnicodeString& message) noexcept;
-    Core::Expected<unsigned long , System::ConsoleError> Read(Core::UnicodeString& message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(wchar_t message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(const wchar_t* message, Index messageLength) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(const Core::UnicodeString& message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Write(const Core::UnicodeStringView& message) noexcept;
+    Core::Expected<Index , System::ConsoleError> Read(Core::UnicodeString& message) noexcept;
 
-    template <typename T, unsigned long N>
-    Core::Expected<unsigned long , System::ConsoleError> Write(const T (&array)[N]) noexcept {
+    template <typename T, Index N>
+    Core::Expected<Index , System::ConsoleError> Write(const T (&array)[N]) noexcept {
         return Write(array,N-1);
     }
 };

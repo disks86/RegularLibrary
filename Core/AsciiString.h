@@ -11,6 +11,7 @@
 namespace Core {
 
     typedef List<char> AsciiString;
+    typedef ListView<char> AsciiStringView;
 
 } // Core
 

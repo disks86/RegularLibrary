@@ -13,4 +13,6 @@
     #define REGULAR_API
 #endif
 
+using Index = long;
+
 #endif // EXPORT_H

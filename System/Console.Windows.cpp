@@ -7,7 +7,7 @@ System::Console::Console()
     AllocConsole();
 }
 
-Core::Expected<unsigned long , System::ConsoleError> System::Console::Write(const char message) noexcept {
+Core::Expected<Index , System::ConsoleError> System::Console::Write(const char message) noexcept {
     DWORD written;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -38,8 +38,8 @@ Core::Expected<unsigned long , System::ConsoleError> System::Console::Write(cons
     }
 }
 
-Core::Expected<unsigned long, System::ConsoleError>
-System::Console::Write(const char *message, unsigned long messageLength) noexcept {
+Core::Expected<Index, System::ConsoleError>
+System::Console::Write(const char *message, Index messageLength) noexcept {
     DWORD written;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -70,7 +70,7 @@ System::Console::Write(const char *message, unsigned long messageLength) noexcep
     }
 }
 
-Core::Expected<unsigned long, System::ConsoleError> System::Console::Write(const Core::AsciiString &message) noexcept {
+Core::Expected<Index, System::ConsoleError> System::Console::Write(const Core::AsciiString &message) noexcept {
     auto result = message.Get();
     if (!result.HasValue()) {
         return ConsoleError::GenericError;
@@ -79,7 +79,19 @@ Core::Expected<unsigned long, System::ConsoleError> System::Console::Write(const
     return Write(result.GetValue(), message.GetLength());
 }
 
-Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::AsciiString &message) noexcept {
+Core::Expected<Index, System::ConsoleError> System::Console::Write(const Core::AsciiStringView &message) noexcept {
+    auto result = message.GetList().Get();
+    if (!result.HasValue()) {
+        return ConsoleError::GenericError;
+    }
+
+    auto array = result.GetValue();
+    array+= message.GetIndex();
+
+    return Write(array, message.GetLength());
+}
+
+Core::Expected<Index, System::ConsoleError> System::Console::Read(Core::AsciiString &message) noexcept {
     DWORD numberOfCharsRead=0;
     HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -125,7 +137,7 @@ Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::
     return numberOfCharsRead;
 }
 
-Core::Expected<unsigned long , System::ConsoleError> System::Console::Write(const wchar_t message) noexcept {
+Core::Expected<Index , System::ConsoleError> System::Console::Write(const wchar_t message) noexcept {
     DWORD written;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -156,8 +168,8 @@ Core::Expected<unsigned long , System::ConsoleError> System::Console::Write(cons
     }
 }
 
-Core::Expected<unsigned long, System::ConsoleError>
-System::Console::Write(const wchar_t *message, unsigned long messageLength) noexcept {
+Core::Expected<Index, System::ConsoleError>
+System::Console::Write(const wchar_t *message, Index messageLength) noexcept {
     DWORD written;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -188,7 +200,7 @@ System::Console::Write(const wchar_t *message, unsigned long messageLength) noex
     }
 }
 
-Core::Expected<unsigned long, System::ConsoleError> System::Console::Write(const Core::UnicodeString &message) noexcept {
+Core::Expected<Index, System::ConsoleError> System::Console::Write(const Core::UnicodeString &message) noexcept {
     auto result = message.Get();
     if (!result.HasValue()) {
         return ConsoleError::GenericError;
@@ -197,7 +209,19 @@ Core::Expected<unsigned long, System::ConsoleError> System::Console::Write(const
     return Write(result.GetValue(), message.GetLength());
 }
 
-Core::Expected<unsigned long, System::ConsoleError> System::Console::Read(Core::UnicodeString &message) noexcept {
+Core::Expected<Index, System::ConsoleError> System::Console::Write(const Core::UnicodeStringView &message) noexcept {
+    auto result = message.GetList().Get();
+    if (!result.HasValue()) {
+        return ConsoleError::GenericError;
+    }
+
+    auto array = result.GetValue();
+    array+= message.GetIndex();
+
+    return Write(array, message.GetLength());
+}
+
+Core::Expected<Index, System::ConsoleError> System::Console::Read(Core::UnicodeString &message) noexcept {
     DWORD numberOfCharsRead=0;
     HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {

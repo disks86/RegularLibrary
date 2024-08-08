@@ -12,17 +12,17 @@
 
 namespace Core {
 
-    template <typename T>
+    template<typename T>
     struct IsCharacterType {
         static constexpr bool value = false;
     };
 
-    template <>
+    template<>
     struct IsCharacterType<char> {
         static constexpr bool value = true;
     };
 
-    template <>
+    template<>
     struct IsCharacterType<wchar_t> {
         static constexpr bool value = true;
     };
@@ -34,10 +34,49 @@ namespace Core {
     };
 
     template<typename ValueType>
+    class List;
+
+    template<typename ValueType>
+    class ListView {
+        const List<ValueType>* mList;
+        Index mIndex;
+        Index mLength;
+    public:
+        ListView(const List<ValueType>* list, Index index, Index length)
+        noexcept: mList(list), mIndex(index), mLength(length) {
+
+        }
+
+        // Copy constructor
+        ListView(const ListView<ValueType> &other) noexcept: mList(other.mList), mIndex(other.mIndex),
+                                                             mLength(other.mLength) {
+
+        }
+
+        // Move constructor
+        ListView(const ListView<ValueType> &&other) noexcept: mList(other.mList), mIndex(other.mIndex),
+                                                              mLength(other.mLength) {
+
+        }
+
+        const List<ValueType> &GetList() const noexcept {
+            return (*mList);
+        }
+
+        Index GetIndex() const noexcept {
+            return mIndex;
+        }
+
+        Index GetLength() const noexcept {
+            return mLength;
+        }
+    };
+
+    template<typename ValueType>
     class List : public MemoryConsumer {
         ValueType *mArray = {};
-        unsigned long mSize = {};
-        unsigned long mCapacity = {};
+        Index mSize = {};
+        Index mCapacity = {};
 
         Core::Expected<Core::Empty, System::AllocationError> Grow() noexcept {
             mCapacity *= 2;
@@ -60,7 +99,7 @@ namespace Core {
 
     public:
 
-        template<typename T, unsigned long N>
+        template<typename T, Index N>
         List(const T (&array)[N]) noexcept: mSize(0), mCapacity(N + 1) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
@@ -72,7 +111,7 @@ namespace Core {
             }
         }
 
-        template<typename T, unsigned long N>
+        template<typename T, Index N>
         List(System::IAllocator &allocator, const T (&array)[N]) noexcept: MemoryConsumer(allocator), mSize(0),
                                                                            mCapacity(N + 1) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
@@ -85,7 +124,7 @@ namespace Core {
             }
         }
 
-        template<typename T, unsigned long N>
+        template<typename T, Index N>
         List(System::IAllocator *allocator, const T (&array)[N]) noexcept: MemoryConsumer(allocator), mSize(0),
                                                                            mCapacity(N + 1) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
@@ -98,23 +137,23 @@ namespace Core {
             }
         }
 
-        List(unsigned long capacity = 2) noexcept: mSize(0), mCapacity(capacity) {
+        List(Index capacity = 2) noexcept: mSize(0), mCapacity(capacity) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
         }
 
-        List(System::IAllocator &allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0),
-                                                                                  mCapacity(capacity) {
+        List(System::IAllocator &allocator, Index capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0),
+                                                                          mCapacity(capacity) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
             }
         }
 
-        List(System::IAllocator *allocator, unsigned long capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0),
-                                                                                  mCapacity(capacity) {
+        List(System::IAllocator *allocator, Index capacity = 2) noexcept: MemoryConsumer(allocator), mSize(0),
+                                                                          mCapacity(capacity) {
             auto allocationResult = mAllocator->Allocate(mCapacity * sizeof(ValueType), true);
             if (allocationResult.HasValue()) {
                 mArray = static_cast<ValueType *>(allocationResult.GetValue());
@@ -213,19 +252,19 @@ namespace Core {
             return *this;
         }
 
-        unsigned long GetSize() const noexcept {
+        Index GetSize() const noexcept {
             return mSize;
         }
 
-        unsigned long GetLength() const noexcept {
+        Index GetLength() const noexcept {
             return mSize;
         }
 
-        unsigned long GetUpperBound() const noexcept {
+        Index GetUpperBound() const noexcept {
             return (mSize - 1);
         }
 
-        unsigned long GetCapacity() const noexcept {
+        Index GetCapacity() const noexcept {
             return mCapacity;
         }
 
@@ -233,9 +272,9 @@ namespace Core {
             return !mSize;
         }
 
-        template<typename T, unsigned long N>
+        template<typename T, Index N>
         Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N]) noexcept {
-            for (unsigned long i = 0; i < N; ++i) {
+            for (Index i = 0; i < N; ++i) {
                 auto result = Add(array[i]);
                 if (!result.HasValue()) {
                     return result.GetError();
@@ -245,9 +284,9 @@ namespace Core {
             return Core::Empty();
         }
 
-        template<typename T, unsigned long N>
-        Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N], unsigned long count) noexcept {
-            for (unsigned long i = 0; i < Core::Math::Min(N, count); ++i) {
+        template<typename T, Index N>
+        Core::Expected<Core::Empty, Core::ListError> Add(const T (&array)[N], Index count) noexcept {
+            for (Index i = 0; i < Core::Math::Min(N, count); ++i) {
                 auto result = Add(array[i]);
                 if (!result.HasValue()) {
                     return result.GetError();
@@ -258,7 +297,7 @@ namespace Core {
         }
 
         Core::Expected<Core::Empty, Core::ListError> Add(const List &other) noexcept {
-            for (unsigned long i = 0; i < other.mSize; ++i) {
+            for (Index i = 0; i < other.mSize; ++i) {
                 auto result = Add(other.mArray[i]);
                 if (!result.HasValue()) {
                     return result.GetError();
@@ -282,11 +321,11 @@ namespace Core {
             return &mArray[index];
         }
 
-        Core::Expected<Core::Empty, Core::ListError> Remove(unsigned long index) noexcept {
+        Core::Expected<Core::Empty, Core::ListError> Remove(Index index) noexcept {
             if (index < 0 || index >= mSize) {
                 return ListError::IndexOutOfRange;
             }
-            for (unsigned long i = index; i < mSize - 1; ++i) {
+            for (Index i = index; i < mSize - 1; ++i) {
                 mArray[i] = mArray[i + 1];
             }
             --mSize;
@@ -295,7 +334,7 @@ namespace Core {
         }
 
         Core::Expected<Core::Empty, Core::ListError> Remove(ValueType value) noexcept {
-            unsigned long i;
+            Index i;
             for (i = 0; i < mSize; ++i) {
                 if (mArray[i] == value) {
                     mArray[i].~ValueType();
@@ -304,7 +343,7 @@ namespace Core {
             }
 
             if (i < mSize) {
-                for (int j = i; j < mSize - 1; ++j) {
+                for (Index j = i; j < mSize - 1; ++j) {
                     mArray[j] = mArray[j + 1];
                 }
                 --mSize;
@@ -317,7 +356,7 @@ namespace Core {
 
         Core::Expected<Core::Empty, Core::ListError> Clear() noexcept {
             if (!IsEmpty()) {
-                for (unsigned long i = 0; i < mSize; ++i) {
+                for (Index i = 0; i < mSize; ++i) {
                     mArray[i].~ValueType();
                 }
                 mSize = 0;
@@ -333,7 +372,7 @@ namespace Core {
             return mArray;
         }
 
-        Core::Expected<ValueType *, Core::ListError> Get(int index) const noexcept {
+        Core::Expected<ValueType *, Core::ListError> Get(Index index) const noexcept {
             if (index < 0 || index >= mSize) {
                 return ListError::IndexOutOfRange;
             }
@@ -341,7 +380,7 @@ namespace Core {
         }
 
         Core::Expected<ValueType *, Core::ListError> Get(const ValueType &value) const noexcept {
-            for (unsigned long i = 0; i < mSize; ++i) {
+            for (Index i = 0; i < mSize; ++i) {
                 if (mArray[i] == value) {
                     return mArray[i];
                 }
@@ -350,7 +389,7 @@ namespace Core {
             return ListError::ElementNotFound;
         }
 
-        Core::Expected<Core::Empty, Core::ListError> Set(int index, ValueType value) noexcept {
+        Core::Expected<Core::Empty, Core::ListError> Set(Index index, ValueType value) noexcept {
             if (index < 0 || index >= mSize) {
                 return ListError::IndexOutOfRange;
             }
@@ -360,10 +399,17 @@ namespace Core {
         }
 
         template<typename Func>
-        void ForEach(Func func) {
-            for (int i = 0; i < mSize; ++i) {
+        void ForEach(Func func) noexcept {
+            for (Index i = 0; i < mSize; ++i) {
                 func(mArray[i]);
             }
+        }
+
+        ListView<ValueType> Slice(Index index, Index length) const noexcept {
+            Index safeIndex = Core::Math::Min(index, mSize);
+            Index safeLength = Core::Math::Min(length, index + mSize);
+            ListView<ValueType> view(this, safeIndex, safeLength);
+            return view;
         }
     };
 
