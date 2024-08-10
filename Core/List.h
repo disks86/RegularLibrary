@@ -449,12 +449,57 @@ namespace Core {
 
             return pieces.GetLength();
         }
-        
-        //TODO: Replace
 
-        //TODO: TrimEnd, TrimStart, and Trim likely providing trim value so I don't have to hard code space for list of string.
+        void Replace(const ValueType &from, const ValueType &to) {
+            for (Index i = 0; i < mSize; ++i) {
+                if (mArray[i] == from) {
+                    mArray[i] = to;
+                }
+            }
+        }
 
-        //TODO: Sort
+        //TODO: Replace (list, list)
+
+        void TrimStart(const ValueType &value) {
+            int index = 0;
+
+            while (index < mSize && mArray[index] == value) {
+                index++;
+            }
+
+            for (int i = index; i < mSize; i++) {
+                mArray[i - index] = mArray[i];
+            }
+
+            mSize -= index;
+        }
+
+        void TrimEnd(const ValueType &value) {
+            int index = mSize - 1;
+
+            while (index >= 0 && mArray[index] == value) {
+                index--;
+            }
+
+            mSize = index + 1;
+        }
+
+        void Trim(const ValueType &value) {
+            TrimStart(value);
+            TrimEnd(value);
+        }
+
+        void Sort() {
+            for (int i = 0; i < mSize - 1; i++) {
+                for (int j = 0; j < mSize - i - 1; j++) {
+                    if (mArray[j] > mArray[j + 1]) {
+                        int temp = mArray[j];
+                        mArray[j] = mArray[j + 1];
+                        mArray[j + 1] = temp;
+                    }
+                }
+            }
+        }
     };
 
     template<typename T>
