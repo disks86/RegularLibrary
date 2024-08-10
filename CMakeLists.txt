@@ -28,11 +28,12 @@ message(STATUS "Found H files: ${ALL_H_FILES}")
 
 add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Export.h
-        System/Allocator.h
         RegularLibrary.h
         RegularLibrary.cpp
-        Core/Expected.h
+        System/Allocator.h
         System/Console.h
+        System/File.h
+        Core/Expected.h
         Core/List.cpp
         Core/List.h
         Core/AsciiString.cpp
