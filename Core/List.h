@@ -458,7 +458,37 @@ namespace Core {
             }
         }
 
-        //TODO: Replace (list, list)
+        void Replace(const List<ValueType> &from, const List<ValueType> &to) {
+            for (int i = 0; i <= mSize - from.mSize; i++) {
+                bool match = true;
+                for (int j = 0; j < from.mSize; j++) {
+                    if (mArray[i + j] != from.mArray[j]) {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match) {
+                    if (to.mSize != from.mSize) {
+                        int shift = to.mSize - from.mSize;
+                        if (shift > 0) { // Insert space
+                            for (int k = mSize - 1; k >= i + from.mSize; k--) {
+                                mArray[k + shift] = mArray[k];
+                            }
+                        } else { // Remove space
+                            for (int k = i + from.mSize; k < mSize; k++) {
+                                mArray[k + shift] = mArray[k];
+                            }
+                        }
+                        mSize += shift;
+                    }
+
+                    for (int j = 0; j < to.mSize; j++) {
+                        mArray[i + j] = to.mArray[j];
+                    }
+                }
+            }
+        }
 
         void TrimStart(const ValueType &value) {
             int index = 0;
