@@ -425,6 +425,10 @@ namespace Core {
             return mSize && (mArray[0] == value);
         }
 
+        bool EndsWith(const ValueType &value) const noexcept {
+            return mSize && (mArray[(mSize-1)] == value);
+        }
+
         bool Split(const ValueType &value, List<ListView<ValueType>> &pieces) {
             Index start = -1;
             Index length = -1;
