@@ -426,7 +426,7 @@ namespace Core {
         }
 
         bool EndsWith(const ValueType &value) const noexcept {
-            return mSize && (mArray[(mSize-1)] == value);
+            return mSize && (mArray[(mSize - 1)] == value);
         }
 
         bool Split(const ValueType &value, List<ListView<ValueType>> &pieces) {
@@ -463,9 +463,9 @@ namespace Core {
         }
 
         void Replace(const List<ValueType> &from, const List<ValueType> &to) {
-            for (int i = 0; i <= mSize - from.mSize; i++) {
+            for (Index i = 0; i <= mSize - from.mSize; i++) {
                 bool match = true;
-                for (int j = 0; j < from.mSize; j++) {
+                for (Index j = 0; j < from.mSize; j++) {
                     if (mArray[i + j] != from.mArray[j]) {
                         match = false;
                         break;
@@ -474,20 +474,20 @@ namespace Core {
 
                 if (match) {
                     if (to.mSize != from.mSize) {
-                        int shift = to.mSize - from.mSize;
+                        Index shift = to.mSize - from.mSize;
                         if (shift > 0) { // Insert space
-                            for (int k = mSize - 1; k >= i + from.mSize; k--) {
+                            for (Index k = mSize - 1; k >= i + from.mSize; k--) {
                                 mArray[k + shift] = mArray[k];
                             }
                         } else { // Remove space
-                            for (int k = i + from.mSize; k < mSize; k++) {
+                            for (Index k = i + from.mSize; k < mSize; k++) {
                                 mArray[k + shift] = mArray[k];
                             }
                         }
                         mSize += shift;
                     }
 
-                    for (int j = 0; j < to.mSize; j++) {
+                    for (Index j = 0; j < to.mSize; j++) {
                         mArray[i + j] = to.mArray[j];
                     }
                 }
@@ -495,13 +495,13 @@ namespace Core {
         }
 
         void TrimStart(const ValueType &value) {
-            int index = 0;
+            Index index = 0;
 
             while (index < mSize && mArray[index] == value) {
                 index++;
             }
 
-            for (int i = index; i < mSize; i++) {
+            for (Index i = index; i < mSize; i++) {
                 mArray[i - index] = mArray[i];
             }
 
@@ -509,7 +509,7 @@ namespace Core {
         }
 
         void TrimEnd(const ValueType &value) {
-            int index = mSize - 1;
+            Index index = mSize - 1;
 
             while (index >= 0 && mArray[index] == value) {
                 index--;
@@ -524,15 +524,41 @@ namespace Core {
         }
 
         void Sort() {
-            for (int i = 0; i < mSize - 1; i++) {
-                for (int j = 0; j < mSize - i - 1; j++) {
+            for (Index i = 0; i < mSize - 1; i++) {
+                for (Index j = 0; j < mSize - i - 1; j++) {
                     if (mArray[j] > mArray[j + 1]) {
-                        int temp = mArray[j];
+                        Index temp = mArray[j];
                         mArray[j] = mArray[j + 1];
                         mArray[j + 1] = temp;
                     }
                 }
             }
+        }
+
+        bool Contains(const ValueType &search) {
+            for (Index i = 0; i < mSize; ++i) {
+                if (mArray[i] == search) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool Contains(const List<ValueType> &search) {
+            for (Index i = 0; i <= mSize - search.mSize; i++) {
+                bool match = true;
+                for (Index j = 0; j < search.mSize; j++) {
+                    if (mArray[i + j] != search.mArray[j]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
 
