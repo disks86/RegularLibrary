@@ -12,6 +12,7 @@ namespace Core {
 
     typedef List<wchar_t> UnicodeString;
     typedef ListView<wchar_t> UnicodeStringView;
+    typedef List<ListView<wchar_t>> UnicodeSubstrings;
 
 } // Core
 

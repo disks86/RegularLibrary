@@ -38,11 +38,11 @@ namespace Core {
 
     template<typename ValueType>
     class ListView {
-        const List<ValueType>* mList;
+        const List<ValueType> *mList;
         Index mIndex;
         Index mLength;
     public:
-        ListView(const List<ValueType>* list, Index index, Index length)
+        ListView(const List<ValueType> *list, Index index, Index length)
         noexcept: mList(list), mIndex(index), mLength(length) {
 
         }
@@ -51,6 +51,15 @@ namespace Core {
         ListView(const ListView<ValueType> &other) noexcept: mList(other.mList), mIndex(other.mIndex),
                                                              mLength(other.mLength) {
 
+        }
+
+        // Copy assignment operator
+        ListView &operator=(const ListView &other) noexcept {
+            mList = other.mList;
+            mIndex = other.mIndex;
+            mLength = other.mLength;
+
+            return *this;
         }
 
         // Move constructor
@@ -411,6 +420,41 @@ namespace Core {
             ListView<ValueType> view(this, safeIndex, safeLength);
             return view;
         }
+
+        bool StartsWith(const ValueType &value) const noexcept {
+            return mSize && (mArray[0] == value);
+        }
+
+        bool Split(const ValueType &value, List<ListView<ValueType>> &pieces) {
+            Index start = -1;
+            Index length = -1;
+
+            for (Index i = 0; i < mSize; ++i) {
+                if (mArray[i] == value) {
+                    if (start > -1) {
+                        length = (i - start) + 1;
+                        pieces.Add(ListView<ValueType>(this, start, length));
+                        start = -1;
+                    } else {
+                        pieces.Add(ListView<ValueType>(this, 0, i + 1));
+                        start = i + 1;
+                    }
+                }
+            }
+
+            if (start > -1) {
+                length = ((mSize - 1) - start) + 1;
+                pieces.Add(ListView<ValueType>(this, start, length));
+            }
+
+            return pieces.GetLength();
+        }
+        
+        //TODO: Replace
+
+        //TODO: TrimEnd, TrimStart, and Trim likely providing trim value so I don't have to hard code space for list of string.
+
+        //TODO: Sort
     };
 
     template<typename T>
