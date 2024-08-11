@@ -8,18 +8,18 @@
 namespace Core {
     class Math {
     public:
-        template <typename T>
-        constexpr static T Min(T a,T b) noexcept {
-            if (a<b){
+        template<typename T>
+        constexpr static T Min(T a, T b) noexcept {
+            if (a < b) {
                 return a;
             } else {
                 return b;
             }
         }
 
-        template <typename T>
-        constexpr static T Max(T a,T b) noexcept {
-            if (a>b){
+        template<typename T>
+        constexpr static T Max(T a, T b) noexcept {
+            if (a > b) {
                 return a;
             } else {
                 return b;

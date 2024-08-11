@@ -2,12 +2,11 @@
 
 #include <windows.h>
 
-System::Console::Console()
-{
+System::Console::Console() noexcept {
     AllocConsole();
 }
 
-Core::Expected<Index , System::ConsoleError> System::Console::Write(const char message) noexcept {
+Core::Expected<Index, System::ConsoleError> System::Console::Write(const char message) noexcept {
     DWORD written;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -86,13 +85,13 @@ Core::Expected<Index, System::ConsoleError> System::Console::Write(const Core::A
     }
 
     auto array = result.GetValue();
-    array+= message.GetIndex();
+    array += message.GetIndex();
 
     return Write(array, message.GetLength());
 }
 
 Core::Expected<Index, System::ConsoleError> System::Console::Read(Core::AsciiString &message) noexcept {
-    DWORD numberOfCharsRead=0;
+    DWORD numberOfCharsRead = 0;
     HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
         return ConsoleError::InvalidConsoleType;
@@ -137,7 +136,7 @@ Core::Expected<Index, System::ConsoleError> System::Console::Read(Core::AsciiStr
     return numberOfCharsRead;
 }
 
-Core::Expected<Index , System::ConsoleError> System::Console::Write(const wchar_t message) noexcept {
+Core::Expected<Index, System::ConsoleError> System::Console::Write(const wchar_t message) noexcept {
     DWORD written;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
@@ -216,13 +215,13 @@ Core::Expected<Index, System::ConsoleError> System::Console::Write(const Core::U
     }
 
     auto array = result.GetValue();
-    array+= message.GetIndex();
+    array += message.GetIndex();
 
     return Write(array, message.GetLength());
 }
 
 Core::Expected<Index, System::ConsoleError> System::Console::Read(Core::UnicodeString &message) noexcept {
-    DWORD numberOfCharsRead=0;
+    DWORD numberOfCharsRead = 0;
     HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
         return ConsoleError::InvalidConsoleType;

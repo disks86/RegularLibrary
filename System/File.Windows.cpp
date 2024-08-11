@@ -1,4 +1,4 @@
-#include "File.h"
+#include "System/File.h"
 
 #include <windows.h>
 
@@ -76,17 +76,17 @@ bool System::File::Open(const System::UnicodeFilePath &filePath) noexcept {
     }
 }
 
-//REGULAR_API bool System::File::Copy(const System::FilePath &source, const System::FilePath &target) noexcept {
-//    if (source.GetLength() > MAX_PATH || target.GetLength() > MAX_PATH) {
-//        return false;
-//    }
-//
-//    auto sourceResult = source.Get();
-//    auto targetResult = target.Get();
-//
-//    if (sourceResult.HasValue() && targetResult.HasValue()) {
-//        return CopyFile(sourceResult.GetValue(), targetResult.GetValue(), false);
-//    } else {
-//        return false;
-//    }
-//}
+REGULAR_API bool System::File::Copy(const System::FilePath &source, const System::FilePath &target) noexcept {
+    if (source.GetLength() > MAX_PATH || target.GetLength() > MAX_PATH) {
+        return false;
+    }
+
+    auto sourceResult = source.Get();
+    auto targetResult = target.Get();
+
+    if (sourceResult.HasValue() && targetResult.HasValue()) {
+        return CopyFile(sourceResult.GetValue(), targetResult.GetValue(), false);
+    } else {
+        return false;
+    }
+}

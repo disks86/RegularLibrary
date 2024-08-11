@@ -8,12 +8,13 @@ namespace Core {
         KeyType Key;
         ValueType Value;
 
-        auto operator<=>(const Pair& other) const {
+        auto operator<=>(const Pair &other) const {
             return (Key <=> other.Key);
         }
 
-        Pair(const KeyType& key) : Key(key),Value({}) {}
-        Pair(const KeyType& key, const ValueType& value) : Key(key),Value(value) {}
+        Pair(const KeyType &key) : Key(key), Value({}) {}
+
+        Pair(const KeyType &key, const ValueType &value) : Key(key), Value(value) {}
 
 
         operator ValueType() const {

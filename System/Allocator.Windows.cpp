@@ -2,7 +2,7 @@
 
 #include <windows.h>
 
- System::Allocator System::Allocator::Default;
+System::Allocator System::Allocator::Default;
 
 System::Allocator::Allocator() {
 }
@@ -24,8 +24,9 @@ Core::Expected<Core::Empty, System::AllocationError> System::Allocator::Dealloca
     }
 }
 
-Core::Expected<void *, System::AllocationError> System::Allocator::Resize(void *ptr, Index size, bool initialize) noexcept {
-    void* resizedBlock = HeapReAlloc(GetProcessHeap(), initialize ? HEAP_ZERO_MEMORY : 0, ptr, size);
+Core::Expected<void *, System::AllocationError>
+System::Allocator::Resize(void *ptr, Index size, bool initialize) noexcept {
+    void *resizedBlock = HeapReAlloc(GetProcessHeap(), initialize ? HEAP_ZERO_MEMORY : 0, ptr, size);
     if (resizedBlock == NULL) {
         return AllocationError::OutOfMemory;
     }

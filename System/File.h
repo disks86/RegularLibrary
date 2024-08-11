@@ -19,6 +19,7 @@ namespace System {
     public:
 
         File() noexcept;
+
         ~File() noexcept;
 
         bool Open(const char *filePath, Index filePathLength) noexcept;
@@ -29,11 +30,12 @@ namespace System {
 
         bool Open(const UnicodeFilePath &filePath) noexcept;
 
-//        template<typename T, Index N>
-//        bool Open(const T (&array)[N]) noexcept {
-//            return Open(array, N);
-//        }
-        //static bool Copy(const FilePath &source, const FilePath &target) noexcept;
+        template<typename T, Index N>
+        bool Open(const T (&array)[N]) noexcept {
+            return Open(array, N);
+        }
+
+        static bool Copy(const FilePath &source, const FilePath &target) noexcept;
     };
 
 } // System

@@ -4,14 +4,14 @@
 
 #include "MemoryConsumer.h"
 
-Core::MemoryConsumer::MemoryConsumer() noexcept : mAllocator(&System::Allocator::Default) {
+Core::MemoryConsumer::MemoryConsumer() noexcept: mAllocator(&System::Allocator::Default) {
 
 }
 
-Core::MemoryConsumer::MemoryConsumer(System::IAllocator& allocator) noexcept : mAllocator(&allocator) {
+Core::MemoryConsumer::MemoryConsumer(System::IAllocator &allocator) noexcept: mAllocator(&allocator) {
 
 }
 
-Core::MemoryConsumer::MemoryConsumer(System::IAllocator* allocator) noexcept : mAllocator(allocator) {
+Core::MemoryConsumer::MemoryConsumer(System::IAllocator *allocator) noexcept: mAllocator(allocator) {
 
 }
