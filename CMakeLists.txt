@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(RegularLibrary)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(BUILD_SHARED_LIBS ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/System)
 include_directories(${CMAKE_SOURCE_DIR}/Core)
@@ -47,6 +49,9 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Core/UnicodeString.h
         Core/Pair.cpp
         Core/Pair.h)
+
+include(GenerateExportHeader)
+generate_export_header(${PROJECT_NAME})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_REGULARLIBRARY)
 
