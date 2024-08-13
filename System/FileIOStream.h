@@ -16,7 +16,7 @@ namespace System {
     using FileBuffer = Core::List<char>;
 
     class REGULAR_API FileIOStream : public Core::IIOStream {
-        void *mNativeHandle = {};
+        void* mNativeHandle = {};
     public:
         ~FileIOStream() noexcept;
 

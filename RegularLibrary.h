@@ -11,6 +11,6 @@
 #include "Core/AsciiString.h"
 #include "Core/Math.h"
 
-void hello();
+REGULAR_API void Test();
 
 #endif //REGULARLIBRARY_H

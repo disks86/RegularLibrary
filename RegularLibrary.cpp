@@ -1,5 +1,5 @@
 #include "RegularLibrary.h"
 
-void hello() {
-
+void Test() {
+    System::FileIOStream fileIOStream;
 }
