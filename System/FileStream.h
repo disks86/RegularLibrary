@@ -2,11 +2,12 @@
 // Created by disks on 8/10/2024.
 //
 
-#ifndef REGULARLIBRARY_FILE_H
-#define REGULARLIBRARY_FILE_H
+#ifndef REGULARLIBRARY_FILESTREAM_H
+#define REGULARLIBRARY_FILESTREAM_H
 
 #include "Export.h"
 #include "Core/List.h"
+#include "Core/IStream.h"
 
 namespace System {
 
@@ -14,13 +15,10 @@ namespace System {
     typedef Core::List<wchar_t> UnicodeFilePath;
     typedef Core::List<char> FileBuffer;
 
-    class REGULAR_API File {
+    class REGULAR_API FileStream : public Core::IStream {
         void *mNativeHandle = nullptr;
     public:
-
-        File() noexcept;
-
-        ~File() noexcept;
+        ~FileStream() noexcept;
 
         bool Open(const char *filePath, Index filePathLength) noexcept;
 
@@ -35,9 +33,11 @@ namespace System {
             return Open(array, N);
         }
 
+        bool Write(char *buffer, Index bufferLength) noexcept;
+
         static bool Copy(const FilePath &source, const FilePath &target) noexcept;
     };
 
 } // System
 
-#endif //REGULARLIBRARY_FILE_H
+#endif //REGULARLIBRARY_FILESTREAM_H

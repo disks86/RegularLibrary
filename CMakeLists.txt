@@ -34,7 +34,7 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         RegularLibrary.cpp
         System/Allocator.h
         System/Console.h
-        System/File.h
+        System/FileStream.h
         Core/Expected.h
         Core/List.cpp
         Core/List.h
@@ -48,7 +48,9 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Core/UnicodeString.cpp
         Core/UnicodeString.h
         Core/Pair.cpp
-        Core/Pair.h)
+        Core/Pair.h
+        Core/IStream.cpp
+        Core/IStream.h)
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
