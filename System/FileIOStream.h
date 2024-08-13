@@ -2,23 +2,23 @@
 // Created by disks on 8/10/2024.
 //
 
-#ifndef REGULARLIBRARY_FILESTREAM_H
-#define REGULARLIBRARY_FILESTREAM_H
+#ifndef REGULARLIBRARY_FILEIOSTREAM_H
+#define REGULARLIBRARY_FILEIOSTREAM_H
 
 #include "Export.h"
 #include "Core/List.h"
-#include "Core/IStream.h"
+#include "Core/IIOStream.h"
 
 namespace System {
 
-    typedef Core::List<char> FilePath;
-    typedef Core::List<wchar_t> UnicodeFilePath;
-    typedef Core::List<char> FileBuffer;
+    using UnicodeFilePath = Core::List<wchar_t>;
+    using FilePath = Core::List<char>;
+    using FileBuffer = Core::List<char>;
 
-    class REGULAR_API FileStream : public Core::IStream {
-        void *mNativeHandle = nullptr;
+    class REGULAR_API FileIOStream : public Core::IIOStream {
+        void *mNativeHandle = {};
     public:
-        ~FileStream() noexcept;
+        ~FileIOStream() noexcept;
 
         bool Open(const char *filePath, Index filePathLength) noexcept;
 
@@ -40,4 +40,4 @@ namespace System {
 
 } // System
 
-#endif //REGULARLIBRARY_FILESTREAM_H
+#endif //REGULARLIBRARY_FILEIOSTREAM_H

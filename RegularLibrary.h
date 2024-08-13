@@ -5,7 +5,7 @@
 
 #include "System/Allocator.h"
 #include "System/Console.h"
-#include "System/FileStream.h"
+#include "System/FileIOStream.h"
 
 #include "Core/List.h"
 #include "Core/AsciiString.h"

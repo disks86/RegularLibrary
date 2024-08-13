@@ -2,7 +2,7 @@
 // Created by disks on 8/12/2024.
 //
 
-#include "IStream.h"
+#include "IIOStream.h"
 
 namespace Core {
 } // Core
