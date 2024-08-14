@@ -9,6 +9,7 @@
 #include "Core/Expected.h"
 #include "Core/AsciiString.h"
 #include "Core/UnicodeString.h"
+#include "Core/IIOStream.h"
 
 namespace System {
 
@@ -18,45 +19,30 @@ namespace System {
         Error
     };
 
-    enum class ConsoleError {
-        GenericError,
-        OutOfMemory,
-        OutOfBuffer,
-        Aborted,
-        AccessDenied,
-        InvalidArgument,
-        InvalidConsoleType
-    };
-
-    class REGULAR_API Console {
+    class REGULAR_API Console : public Core::IIOStream {
         char mBuffer[255] = {};
     public:
         Console() noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(char message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(char message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(const char *message, Index messageLength) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(const char *message, Index messageLength) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(const Core::AsciiString &message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::AsciiString &message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(const Core::AsciiStringView &message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::AsciiStringView &message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Read(Core::AsciiString &message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Read(Core::AsciiString &message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(wchar_t message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(wchar_t message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(const wchar_t *message, Index messageLength) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(const wchar_t *message, Index messageLength) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(const Core::UnicodeString &message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::UnicodeString &message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Write(const Core::UnicodeStringView &message) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::UnicodeStringView &message) noexcept;
 
-        Core::Expected<Index, System::ConsoleError> Read(Core::UnicodeString &message) noexcept;
-
-        template<typename T, Index N>
-        Core::Expected<Index, System::ConsoleError> Write(const T (&array)[N]) noexcept {
-            return Write(array, N - 1);
-        }
+        Core::Expected<Index, Core::IOStreamError> Read(Core::UnicodeString &message) noexcept;
     };
 
 } // System

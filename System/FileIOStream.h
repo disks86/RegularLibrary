@@ -16,7 +16,8 @@ namespace System {
     using FileBuffer = Core::List<char>;
 
     class REGULAR_API FileIOStream : public Core::IIOStream {
-        void* mNativeHandle = {};
+        void *mNativeHandle = {};
+        char mBuffer[255] = {};
     public:
         ~FileIOStream() noexcept;
 
@@ -33,7 +34,25 @@ namespace System {
             return Open(array, N);
         }
 
-        bool Write(char *buffer, Index bufferLength) noexcept;
+        Core::Expected<Index, Core::IOStreamError> Write(char message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(const char *message, Index messageLength) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::AsciiString &message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::AsciiStringView &message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Read(Core::AsciiString &message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(wchar_t message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(const wchar_t *message, Index messageLength) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::UnicodeString &message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Write(const Core::UnicodeStringView &message) noexcept;
+
+        Core::Expected<Index, Core::IOStreamError> Read(Core::UnicodeString &message) noexcept;
 
         static bool Copy(const FilePath &source, const FilePath &target) noexcept;
     };

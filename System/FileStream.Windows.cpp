@@ -72,9 +72,235 @@ bool System::FileIOStream::Open(const System::UnicodeFilePath &filePath) noexcep
     }
 }
 
-bool System::FileIOStream::Write(char *buffer, Index bufferLength) noexcept {
-    //TODO: implement write.
-    return true;
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Write(const char message) noexcept {
+    DWORD written;
+    if (!WriteFile(mNativeHandle, &message, 1, &written, nullptr)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+            case ERROR_INVALID_HANDLE:
+                return Core::IOStreamError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return Core::IOStreamError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return Core::IOStreamError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return Core::IOStreamError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return Core::IOStreamError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return Core::IOStreamError::Aborted;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    } else {
+        return written;
+    }
+}
+
+Core::Expected<Index, Core::IOStreamError>
+System::FileIOStream::Write(const char *message, Index messageLength) noexcept {
+    DWORD written;
+    if (!WriteFile(mNativeHandle, message, messageLength, &written, nullptr)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+            case ERROR_INVALID_HANDLE:
+                return Core::IOStreamError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return Core::IOStreamError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return Core::IOStreamError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return Core::IOStreamError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return Core::IOStreamError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return Core::IOStreamError::Aborted;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    } else {
+        return written;
+    }
+}
+
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Write(const Core::AsciiString &message) noexcept {
+    auto result = message.Get();
+    if (!result.HasValue()) {
+        return Core::IOStreamError::GenericError;
+    }
+
+    return Write(result.GetValue(), message.GetLength());
+}
+
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Write(const Core::AsciiStringView &message) noexcept {
+    auto result = message.GetList().Get();
+    if (!result.HasValue()) {
+        return Core::IOStreamError::GenericError;
+    }
+
+    auto array = result.GetValue();
+    array += message.GetIndex();
+
+    return Write(array, message.GetLength());
+}
+
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Read(Core::AsciiString &message) noexcept {
+    DWORD numberOfCharsRead = 0;
+    if (!ReadFile(mNativeHandle, mBuffer, 255, &numberOfCharsRead, nullptr)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+            case ERROR_INVALID_HANDLE:
+                return Core::IOStreamError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return Core::IOStreamError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return Core::IOStreamError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return Core::IOStreamError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return Core::IOStreamError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return Core::IOStreamError::Aborted;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    }
+
+    auto result = message.Clear();
+    if (!result.HasValue()) {
+        return Core::IOStreamError::GenericError;
+    }
+
+    result = message.Add(mBuffer, numberOfCharsRead);
+    if (!result.HasValue()) {
+        switch (result.GetError()) {
+            case Core::ListError::OutOfMemory:
+                return Core::IOStreamError::OutOfMemory;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    }
+
+    return numberOfCharsRead;
+}
+
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Write(const wchar_t message) noexcept {
+    DWORD written;
+    if (!WriteFile(mNativeHandle, &message, 1, &written, nullptr)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+            case ERROR_INVALID_HANDLE:
+                return Core::IOStreamError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return Core::IOStreamError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return Core::IOStreamError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return Core::IOStreamError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return Core::IOStreamError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return Core::IOStreamError::Aborted;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    } else {
+        return written;
+    }
+}
+
+Core::Expected<Index, Core::IOStreamError>
+System::FileIOStream::Write(const wchar_t *message, Index messageLength) noexcept {
+    DWORD written;
+    if (!WriteFile(mNativeHandle, message, messageLength, &written, nullptr)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+            case ERROR_INVALID_HANDLE:
+                return Core::IOStreamError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return Core::IOStreamError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return Core::IOStreamError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return Core::IOStreamError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return Core::IOStreamError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return Core::IOStreamError::Aborted;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    } else {
+        return written;
+    }
+}
+
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Write(const Core::UnicodeString &message) noexcept {
+    auto result = message.Get();
+    if (!result.HasValue()) {
+        return Core::IOStreamError::GenericError;
+    }
+
+    return Write(result.GetValue(), message.GetLength());
+}
+
+Core::Expected<Index, Core::IOStreamError>
+System::FileIOStream::Write(const Core::UnicodeStringView &message) noexcept {
+    auto result = message.GetList().Get();
+    if (!result.HasValue()) {
+        return Core::IOStreamError::GenericError;
+    }
+
+    auto array = result.GetValue();
+    array += message.GetIndex();
+
+    return Write(array, message.GetLength());
+}
+
+Core::Expected<Index, Core::IOStreamError> System::FileIOStream::Read(Core::UnicodeString &message) noexcept {
+    DWORD numberOfCharsRead = 0;
+    if (!ReadFile(mNativeHandle, mBuffer, 255, &numberOfCharsRead, nullptr)) {
+        DWORD errorCode = GetLastError();
+        switch (errorCode) {
+            case ERROR_INVALID_FUNCTION:
+            case ERROR_INVALID_HANDLE:
+                return Core::IOStreamError::InvalidConsoleType;
+            case ERROR_INVALID_PARAMETER:
+                return Core::IOStreamError::InvalidArgument;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                return Core::IOStreamError::OutOfMemory;
+            case ERROR_NOT_ENOUGH_QUOTA:
+                return Core::IOStreamError::GenericError;
+            case ERROR_ACCESS_DENIED:
+                return Core::IOStreamError::AccessDenied;
+            case ERROR_OPERATION_ABORTED:
+                return Core::IOStreamError::Aborted;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    }
+
+    auto result = message.Clear();
+    if (!result.HasValue()) {
+        return Core::IOStreamError::GenericError;
+    }
+
+    result = message.Add(mBuffer, numberOfCharsRead);
+    if (!result.HasValue()) {
+        switch (result.GetError()) {
+            case Core::ListError::OutOfMemory:
+                return Core::IOStreamError::OutOfMemory;
+            default:
+                return Core::IOStreamError::GenericError;
+        }
+    }
+
+    return numberOfCharsRead;
 }
 
 REGULAR_API bool System::FileIOStream::Copy(const System::FilePath &source, const System::FilePath &target) noexcept {
