@@ -43,6 +43,21 @@ namespace System {
         Core::Expected<Index, Core::IOStreamError> Write(const Core::UnicodeStringView &message) noexcept;
 
         Core::Expected<Index, Core::IOStreamError> Read(Core::UnicodeString &message) noexcept;
+
+        template<typename T>
+        Core::Expected<Index, Core::IOStreamError> Write(T message) noexcept {
+            return Write((char *) (&message), sizeof(T));
+        }
+
+        template<typename T, Index N>
+        Core::Expected<Index, Core::IOStreamError> Write(const T (&array)[N]) noexcept {
+            return Write(array, N - 1);
+        }
+
+        template<typename T, Index N>
+        Core::Expected<Index, Core::IOStreamError> Write(const T (&&array)[N]) noexcept {
+            return Write(array, N - 1);
+        }
     };
 
 } // System
