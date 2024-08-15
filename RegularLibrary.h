@@ -6,6 +6,7 @@
 #include "System/Allocator.h"
 #include "System/Console.h"
 #include "System/FileIOStream.h"
+#include "System/NetworkProvider.h"
 
 #include "Core/List.h"
 #include "Core/AsciiString.h"

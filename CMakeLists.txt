@@ -50,7 +50,9 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Core/Pair.cpp
         Core/Pair.h
         Core/IStream.cpp
-        Core/IIOStream.h)
+        Core/IIOStream.h
+        System/TCPClient.h
+        System/NetworkProvider.h)
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
@@ -74,7 +76,7 @@ endif()
 
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
-    target_link_libraries(${PROJECT_NAME} PRIVATE user32 kernel32 gdi32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE user32 kernel32 gdi32 ws2_32)
 endif()
 
 if(UNIX AND NOT APPLE)
