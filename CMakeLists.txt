@@ -35,6 +35,8 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         System/Allocator.h
         System/Console.h
         System/FileIOStream.h
+        System/TCPClient.h
+        System/NetworkProvider.h
         Core/Expected.h
         Core/List.cpp
         Core/List.h
@@ -49,10 +51,8 @@ add_library(${PROJECT_NAME} SHARED ${PLATFORM_CPP_FILES} ${PLATFORM_H_FILES}
         Core/UnicodeString.h
         Core/Pair.cpp
         Core/Pair.h
-        Core/IStream.cpp
-        Core/IIOStream.h
-        System/TCPClient.h
-        System/NetworkProvider.h)
+        Core/IIOStream.cpp
+        Core/IIOStream.h)
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})

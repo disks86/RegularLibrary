@@ -18,7 +18,8 @@ namespace Core {
         Aborted,
         AccessDenied,
         InvalidArgument,
-        InvalidConsoleType
+        InvalidConsoleType,
+        AlreadyClosed
     };
 
     class REGULAR_API IIOStream {

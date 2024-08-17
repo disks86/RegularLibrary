@@ -7,6 +7,7 @@
 #include "System/Console.h"
 #include "System/FileIOStream.h"
 #include "System/NetworkProvider.h"
+#include "System/TCPClient.h"
 
 #include "Core/List.h"
 #include "Core/AsciiString.h"
